@@ -11,9 +11,53 @@ var MonthPicker = (function(){
     return new Date().getYear() + 1900;
   }
   
+  var Events = function() {
+    var handlers = {};
+    
+    this.on = function(name, handler) {
+      if(typeof handlers[name] === 'undefined') {
+        handlers[name] = [];
+      }
+      handlers[name].push(handler);
+    };
+    
+    this.fire = function(name) {
+      if(typeof handlers[name] !== 'undefined') {
+        for(var index = 0; index < handlers[name].length; index++) {
+          handlers[name][index]();
+        }
+      }
+    };
+  };
+
+  var Model = function() {
+    var attributes = {};
+    var events = new Events();
+    
+    this.get = function(name) {
+      return attributes[name];
+    };
+    
+    this.set = function(name, value) {
+      var changed = value !== attributes[name];
+      
+      attributes[name] = value;
+      
+      if(changed) {
+        events.fire('change');
+      }
+    };
+    
+    this.on = function(eventName, handler) {
+      events.on(eventName, handler);
+    };
+  };
+  
   return function() {
-    var selectedYear = currentYear();
-    var selectedMonth = currentMonth();
+    var model = new Model();
+    
+    model.set('year', currentYear());
+    model.set('month', currentMonth());
     
     var root = document.createElement('div');
     var top = document.createElement('div');
@@ -40,7 +84,7 @@ var MonthPicker = (function(){
     bottom.appendChild(yearDownButton);
     
     for(var index = 0; index < 4; index++) {
-      years.appendChild(createYearButton(selectedYear - index));
+      years.appendChild(createYearButton(model.get('year') - index));
     }
     
     for(var month = 1; month <= 12; month++) {
@@ -63,10 +107,10 @@ var MonthPicker = (function(){
     function createYearButton(year) {
       var button = createButton(year.toString(), function() {
         selectButton(button, years);
-        selectedYear = year;
+        model.set('year', year);
       });
       
-      if(year == selectedYear) {
+      if(year == model.get('year')) {
         button.className = 'selected';
       }
       
@@ -77,10 +121,10 @@ var MonthPicker = (function(){
       var monthName = monthNames[month-1];
       var button = createButton(monthName, function() {
         selectButton(button, months);
-        selectedMonth = month;
+        model.set('month', month);
       });
       
-      if(month == selectedMonth) {
+      if(month == model.get('month')) {
         button.className = 'selected';
       }
       
@@ -110,12 +154,6 @@ var MonthPicker = (function(){
     }
     
     this.el = root;
-    
-    this.model = function() {
-      return {
-        year: function() {return selectedYear},
-        month: function() {return selectedMonth}
-      };
-    };
+    this.model = function() {return model};
   };
 })();
