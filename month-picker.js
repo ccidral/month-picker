@@ -99,16 +99,17 @@ var MonthPicker = (function(){
       return button;
     }
     
-    function selectButton(button, container) {
+    function selectButton(buttonSelector, container) {
       container.querySelector('.selected').className = '';
-      button.className = 'selected';
+      container.querySelector(buttonSelector).className = 'selected';
     }
   
     function createYearButton(year) {
       var button = createButton(year.toString(), function() {
-        selectButton(button, years);
         model.set('year', year);
       });
+      
+      button.setAttribute('data-year', year);
       
       if(year == model.get('year')) {
         button.className = 'selected';
@@ -120,9 +121,10 @@ var MonthPicker = (function(){
     function createMonthButton(month) {
       var monthName = monthNames[month-1];
       var button = createButton(monthName, function() {
-        selectButton(button, months);
         model.set('month', month);
       });
+      
+      button.setAttribute('data-month', month);
       
       if(month == model.get('month')) {
         button.className = 'selected';
@@ -152,6 +154,11 @@ var MonthPicker = (function(){
       years.appendChild(newYearButton);
       years.removeChild(firstYearButton);
     }
+    
+    model.on('change', function() {
+      selectButton('a[data-year="' + model.get('year') + '"]', years);
+      selectButton('a[data-month="' + model.get('month') + '"]', months);
+    });
     
     this.el = root;
     this.model = function() {return model};

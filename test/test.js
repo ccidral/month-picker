@@ -213,6 +213,14 @@
           selectYears().eq(1).click();
           expect(monthPicker.model().get('year')).to.be(currentYear()-1);
         });
+        
+        it('updates the UI when changed', function() {
+          monthPicker.model().set('year', currentYear()-1);
+          expect(selectYears().eq(0).hasClass('selected')).to.be(false);
+          expect(selectYears().eq(1).hasClass('selected')).to.be(true);
+          expect(selectYears().eq(2).hasClass('selected')).to.be(false);
+          expect(selectYears().eq(3).hasClass('selected')).to.be(false);
+        });
       });
       
       describe('The month', function() {
@@ -224,6 +232,23 @@
           var anotherMonth = notTheCurrentMonth();
           selectMonths().eq(anotherMonth-1).click();
           expect(monthPicker.model().get('month')).to.be(anotherMonth);
+        });
+        
+        it('updates the UI when changed', function() {
+          var anotherMonth = notTheCurrentMonth();
+          monthPicker.model().set('month', anotherMonth);
+          expect(selectMonths().eq(0).hasClass('selected')).to.be(anotherMonth == 1);
+          expect(selectMonths().eq(1).hasClass('selected')).to.be(anotherMonth == 2);
+          expect(selectMonths().eq(2).hasClass('selected')).to.be(anotherMonth == 3);
+          expect(selectMonths().eq(3).hasClass('selected')).to.be(anotherMonth == 4);
+          expect(selectMonths().eq(4).hasClass('selected')).to.be(anotherMonth == 5);
+          expect(selectMonths().eq(5).hasClass('selected')).to.be(anotherMonth == 6);
+          expect(selectMonths().eq(6).hasClass('selected')).to.be(anotherMonth == 7);
+          expect(selectMonths().eq(7).hasClass('selected')).to.be(anotherMonth == 8);
+          expect(selectMonths().eq(8).hasClass('selected')).to.be(anotherMonth == 9);
+          expect(selectMonths().eq(9).hasClass('selected')).to.be(anotherMonth == 10);
+          expect(selectMonths().eq(10).hasClass('selected')).to.be(anotherMonth == 11);
+          expect(selectMonths().eq(11).hasClass('selected')).to.be(anotherMonth == 12);
         });
       });
       
