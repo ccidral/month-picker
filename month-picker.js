@@ -83,12 +83,32 @@ var MonthPicker = (function(){
     main.appendChild(months);
     bottom.appendChild(yearDownButton);
     
-    for(var index = 0; index < 4; index++) {
-      years.appendChild(createYearButton(model.get('year') - index));
+    createYearButtons();
+    createMonthButtons();
+    
+    function createYearButtons() {
+      for(var index = 0; index < 4; index++) {
+        var button = createYearButton(model.get('year') - index);
+        years.appendChild(button);
+      }
     }
     
-    for(var month = 1; month <= 12; month++) {
-      months.appendChild(createMonthButton(month));
+    function createMonthButtons() {
+      var group = null;
+      
+      for(var month = 1; month <= 12; month++) {
+        if(group === null || (month - 1) % 4 == 0) {
+          group = createMonthGroup();
+          months.appendChild(group);
+        }
+        group.appendChild(createMonthButton(month));
+      }
+    }
+    
+    function createMonthGroup() {
+      var group = document.createElement('div');
+      group.className = 'group';
+      return group;
     }
     
     function createButton(text, clickHandler) {

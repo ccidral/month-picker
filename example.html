@@ -3,14 +3,64 @@
 <head>
   <meta charset="utf-8">
   <title>Month Picker Example</title>
+  <link type="text/css" rel="stylesheet" href="month-picker.css"/>
+  <style>
+    html {
+      font-family: sans-serif;
+    }
+    
+    .month-picker {
+      font-size: 1.25em;
+    }
+    
+    #output {
+      background-color: #eee;
+      border: 1px solid #bbb;
+      border-radius: .2em;
+      box-shadow: inset 0 0 2em #ccc;
+      color: #666;
+      margin: 1em 0;
+      padding: .5em 1em;
+      overflow: auto;
+      width: 15em;
+      height: 10em;
+    }
+    
+    #output p {
+      margin: .5em 0;
+    }
+    
+    em {
+      color: #2288BD;
+      font-weight: bold;
+      font-style: normal;
+      margin-right: 1em;
+    }
+  </style>
   <script src="month-picker.js"></script>
 </head>
 
 <body>
   <script>
     var monthPicker = new MonthPicker(); 
+
+    monthPicker.model().on('change', function() {
+      var year = monthPicker.model().get('year');
+      var month = monthPicker.model().get('month');
+      var message = document.createElement('p');
+      var output = document.getElementById('output');
+      
+      message.innerHTML =
+        'year: <em>' + year + '</em> ' +
+        'month: <em>' + month + '</em>';
+      
+      output.insertBefore(message, output.querySelector('p'));
+    });
+    
     document.body.appendChild(monthPicker.el);
   </script>
+  
+  <div id="output"/>
 </body>
 
 </html>
