@@ -1,0 +1,35 @@
+html {
+  font-family: sans-serif;
+}
+
+body {
+  margin: 2em;
+}
+
+.month-picker {
+  font-size: 1.25em;
+}
+
+#output {
+  background-color: #eee;
+  border: 1px solid #bbb;
+  border-radius: .2em;
+  box-shadow: inset 0 0 2em #ccc;
+  color: #666;
+  margin: 2em 0;
+  padding: .5em 1em;
+  overflow: auto;
+  width: 15em;
+  height: 10em;
+}
+
+#output p {
+  margin: .5em 0;
+}
+
+em {
+  color: #2288BD;
+  font-weight: bold;
+  font-style: normal;
+  margin-right: 1em;
+}
