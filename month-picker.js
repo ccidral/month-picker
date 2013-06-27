@@ -124,7 +124,8 @@ var MonthPicker = (function(){
     }
     
     function selectButton(buttonSelector, container) {
-      container.querySelector('.selected').className = '';
+      var selectedButton = container.querySelector('.selected');
+      if(selectedButton) selectedButton.className = '';
       container.querySelector(buttonSelector).className = 'selected';
     }
   

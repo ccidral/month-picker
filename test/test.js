@@ -87,6 +87,15 @@
       expect(selectYears().eq(3).hasClass('selected')).to.be(false);
     });
     
+    it('should select year when year is clicked and previously selected year is out of visible range', function() {
+      spinYearDownButton().click();
+      selectYears().eq(1).click();
+      expect(selectYears().eq(0).hasClass('selected')).to.be(false);
+      expect(selectYears().eq(1).hasClass('selected')).to.be(true);
+      expect(selectYears().eq(2).hasClass('selected')).to.be(false);
+      expect(selectYears().eq(3).hasClass('selected')).to.be(false);
+    });
+    
     it('should select month when month is clicked', function() {
       var anotherMonth = notTheCurrentMonth();
       selectMonths().eq(anotherMonth-1).click();
