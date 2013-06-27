@@ -65,14 +65,12 @@ var MonthPicker = (function(){
     var bottom = document.createElement('div');
     var years = document.createElement('div');
     var months = document.createElement('div');
-    var yearUpButton = createButton('&#9650;', yearUp);
-    var yearDownButton = createButton('&#9660;', yearDown);
+    var yearUpButton = createSpinButton('&#9650;', 'up', yearUp);
+    var yearDownButton = createSpinButton('&#9660;', 'down', yearDown);
     
     root.className = 'month-picker';
     years.className = 'years';
     months.className = 'months';
-    yearUpButton.className = 'spin-year up';
-    yearDownButton.className = 'spin-year down';
     
     root.appendChild(top);
     root.appendChild(main);
@@ -95,7 +93,6 @@ var MonthPicker = (function(){
     
     function createMonthButtons() {
       var group = null;
-      
       for(var month = 1; month <= 12; month++) {
         if(group === null || (month - 1) % 4 == 0) {
           group = createMonthGroup();
@@ -109,6 +106,13 @@ var MonthPicker = (function(){
       var group = document.createElement('div');
       group.className = 'group';
       return group;
+    }
+    
+    function createSpinButton(text, className, clickHandler) {
+      var container = document.createElement('div');
+      container.className = 'spin-button ' + className;
+      container.appendChild(createButton(text, clickHandler));
+      return container;
     }
     
     function createButton(text, clickHandler) {

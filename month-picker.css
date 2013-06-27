@@ -2,29 +2,35 @@
   text-decoration: none;
 }
 
-.month-picker .spin-year,
+.month-picker .spin-button,
 .month-picker .years {
   display: inline-block;
   width: 3em;
   text-align: center;
 }
 
-.month-picker .spin-year {
+.month-picker .spin-button {
   background-color: #333;
-  color: #999;
-  padding: .2em 0;
 }
 
-.month-picker .spin-year a:hover {
+.month-picker .spin-button a {
+  color: #999;
+  display: block;
+  font-size: .5em;
+  line-height: 2.5em;
+  vertical-align: middle;
+}
+
+.month-picker .spin-button a:hover {
   color: white;
 }
 
-.month-picker .spin-year.up {
+.month-picker .spin-button.up {
   border-top-left-radius: .2em;
   border-top-right-radius: .2em;
 }
 
-.month-picker .spin-year.down {
+.month-picker .spin-button.down {
   border-bottom-left-radius: .2em;
   border-bottom-right-radius: .2em;
 }

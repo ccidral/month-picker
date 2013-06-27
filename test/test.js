@@ -24,11 +24,11 @@
     }
     
     function spinYearUpButton() {
-      return $(monthPicker.el).find('.spin-year.up');
+      return $(monthPicker.el).find('.spin-button.up a');
     }
     
     function spinYearDownButton() {
-      return $(monthPicker.el).find('.spin-year.down');
+      return $(monthPicker.el).find('.spin-button.down a');
     }
     
   
