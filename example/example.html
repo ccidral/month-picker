@@ -1,7 +1,38 @@
 <html>
 
-  <body>
-    Weeee!
-  </body>
+<head>
+  <meta charset="utf-8">
+  <title>Month Picker Example</title>
+  <link type="text/css" rel="stylesheet" href="month-picker.css"/>
+  <link type="text/css" rel="stylesheet" href="example.css"/>
+  <script src="test/jquery.js"></script>
+  <script src="month-picker.js"></script>
+</head>
+
+<body>
+  <script>
+    var monthPicker = new MonthPicker(); 
+
+    monthPicker.model().on('change', function() {
+      var year = monthPicker.model().get('year');
+      var month = monthPicker.model().get('month');
+      
+      var message = $(
+        '<p>year: <em>' + year + '</em> ' +
+        'month: <em>' + month + '</em></p>'
+      );
+      
+      $('#output').prepend(message);
+      
+      message.fadeOut(10000, function() {
+        message.remove();
+      });
+    });
+    
+    $('body').append(monthPicker.el);
+  </script>
   
+  <div id="output"/>
+</body>
+
 </html>
