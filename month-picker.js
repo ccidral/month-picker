@@ -53,7 +53,57 @@ var MonthPicker = (function(){
     };
   };
   
-  return function() {
+  function transition(element, options, callback) {
+    var finalValue = parseInt(options.final);
+    
+    if(!options.animated) {
+      propertyValue(finalValue);
+      callback();
+      return;
+    }
+    
+    var initialValue = parseInt(options.initial);
+    var ascending = finalValue > initialValue;
+    var finished = ascending ?
+        function(a, b) { return a >= b; } :
+        function(a, b) { return a <= b; };
+
+    propertyValue(initialValue);
+    animate();
+    
+    function propertyValue(value) {
+      if(arguments.length)
+        element.style[options.property] = value + options.unit;
+      else
+        return parseInt(element.style[options.property]);
+    }
+    
+    function animate() {
+      var currentValue = propertyValue();
+      var nextValue = currentValue + (ascending ? 1 : -1);
+      
+      propertyValue(nextValue);
+      
+      if(finished(nextValue, finalValue))
+        callback();
+      else
+        setTimeout(animate, 8);
+    }
+  }
+  
+  function preventConcurrentRun(asyncFunction) {
+    var running;
+    return function() {
+      if(!running) {
+        running = true;
+        asyncFunction(function() {
+          running = false;
+        });
+      }
+    };
+  }
+  
+  return function(options) {
     var model = new Model();
     
     model.set('year', currentYear());
@@ -64,13 +114,15 @@ var MonthPicker = (function(){
     var main = document.createElement('div');
     var bottom = document.createElement('div');
     var years = document.createElement('div');
+    var spinner = document.createElement('div');
     var months = document.createElement('div');
-    var yearUpButton = createSpinButton('&#9650;', 'up', yearUp);
-    var yearDownButton = createSpinButton('&#9660;', 'down', yearDown);
+    var yearUpButton = createSpinButton('&#9650;', 'up', preventConcurrentRun(yearUp));
+    var yearDownButton = createSpinButton('&#9660;', 'down', preventConcurrentRun(yearDown));
     
     root.className = 'month-picker';
     years.className = 'years';
     months.className = 'months';
+    spinner.className = 'spinner';
     
     root.appendChild(top);
     root.appendChild(main);
@@ -80,6 +132,7 @@ var MonthPicker = (function(){
     main.appendChild(years);
     main.appendChild(months);
     bottom.appendChild(yearDownButton);
+    years.appendChild(spinner);
     
     createYearButtons();
     createMonthButtons();
@@ -87,7 +140,7 @@ var MonthPicker = (function(){
     function createYearButtons() {
       for(var index = 0; index < 4; index++) {
         var button = createYearButton(model.get('year') - index);
-        years.appendChild(button);
+        spinner.appendChild(button);
       }
     }
     
@@ -159,29 +212,50 @@ var MonthPicker = (function(){
     }
     
     function yearButtons() {
-      return years.querySelectorAll('a');
+      return spinner.querySelectorAll('a');
     }
     
-    function yearUp() {
+    function yearUp(callback) {
       var firstYearButton = yearButtons()[0];
       var lastYearButton = yearButtons()[yearButtons().length-1];
       var firstYear = parseInt(firstYearButton.innerHTML);
       var newYearButton = createYearButton(firstYear + 1);
-      years.insertBefore(newYearButton, firstYearButton);
-      years.removeChild(lastYearButton);
+      
+      spinner.insertBefore(newYearButton, firstYearButton);
+      
+      transition(spinner, {
+        property: 'top', unit: 'px',
+        animated: options && (options.animated === true),
+        initial: -parseInt(window.getComputedStyle(firstYearButton).height),
+        final: 0
+      }, function() {
+        spinner.removeChild(lastYearButton);
+        callback();
+      });
     }
     
-    function yearDown() {
+    function yearDown(callback) {
       var firstYearButton = yearButtons()[0];
       var lastYearButton = yearButtons()[yearButtons().length-1];
       var lastYear = parseInt(lastYearButton.innerHTML);
       var newYearButton = createYearButton(lastYear - 1);
-      years.appendChild(newYearButton);
-      years.removeChild(firstYearButton);
+      
+      spinner.appendChild(newYearButton);
+      
+      transition(spinner, {
+        property: 'top', unit: 'px',
+        animated: options && (options.animated === true),
+        initial: 0,
+        final: -parseInt(window.getComputedStyle(firstYearButton).height)
+      }, function() {
+        spinner.removeChild(firstYearButton);
+        spinner.style.top = 0;
+        callback();
+      });
     }
     
     model.on('change', function() {
-      selectButton('a[data-year="' + model.get('year') + '"]', years);
+      selectButton('a[data-year="' + model.get('year') + '"]', spinner);
       selectButton('a[data-month="' + model.get('month') + '"]', months);
     });
     

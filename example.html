@@ -11,12 +11,20 @@
 
 <body>
   <script>
-    var monthPicker = new MonthPicker(); 
+    var monthPicker = new MonthPicker({
+      animated: true
+    }); 
 
     monthPicker.model().on('change', function() {
       var year = monthPicker.model().get('year');
       var month = monthPicker.model().get('month');
       
+      output(year, month);
+    });
+    
+    $('body').append(monthPicker.el);
+    
+    function output(year, month) {
       var message = $(
         '<p>year: <em>' + year + '</em> ' +
         'month: <em>' + month + '</em></p>'
@@ -27,9 +35,7 @@
       message.fadeOut(10000, function() {
         message.remove();
       });
-    });
-    
-    $('body').append(monthPicker.el);
+    }
   </script>
   
   <div id="output"/>

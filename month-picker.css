@@ -60,6 +60,10 @@
   overflow: hidden;
 }
 
+.month-picker .spinner {
+  position: relative;
+}
+
 .month-picker .years a {
   color: #999;
   display: block;
