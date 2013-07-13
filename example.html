@@ -7,38 +7,59 @@
   <link type="text/css" rel="stylesheet" href="example.css"/>
   <script src="test/jquery.js"></script>
   <script src="month-picker.js"></script>
+  <script>
+    $(function() {
+      var monthPicker = new MonthPicker({
+        animated: true
+      }); 
+  
+      monthPicker.model().on('change:year', function() { updateInput('year') });
+      monthPicker.model().on('change:month', function() { updateInput('month') });
+      
+      updateInput('year');
+      updateInput('month');
+      
+      $('body').append(monthPicker.el);
+      
+      $('button#set').click(function() {
+        var year = getInputValue('year');
+        var month = getInputValue('month');
+        
+        updateModel('year', year, function() { return year > 0 });
+        updateModel('month', month, function() { return month >= 1 && month <= 12 });
+      });
+      
+      function updateModel(propertyName, value, conditionIsMet) {
+        if(conditionIsMet())
+          monthPicker.model().set(propertyName, value);
+        else
+          updateInput(propertyName);
+      }
+      
+      function updateInput(propertyName) {
+        var value = monthPicker.model().get(propertyName);
+        $('input#' + propertyName).val(value);
+      }
+      
+      function getInputValue(propertyName) {
+        return parseInt($('input#' + propertyName).val());
+      }
+    });
+  </script>
 </head>
 
 <body>
-  <script>
-    var monthPicker = new MonthPicker({
-      animated: true
-    }); 
-
-    monthPicker.model().on('change', function() {
-      var year = monthPicker.model().get('year');
-      var month = monthPicker.model().get('month');
-      
-      output(year, month);
-    });
-    
-    $('body').append(monthPicker.el);
-    
-    function output(year, month) {
-      var message = $(
-        '<p>year: <em>' + year + '</em> ' +
-        'month: <em>' + month + '</em></p>'
-      );
-      
-      $('#output').prepend(message);
-      
-      message.fadeOut(10000, function() {
-        message.remove();
-      });
-    }
-  </script>
-  
-  <div id="output"/>
+  <p>
+    <label>
+      Year
+      <input id="year"/>
+    </label>
+    <label>
+      Month
+      <input id="month"/>
+    </label>
+    <button id="set">Set</button>
+  </p>
 </body>
 
 </html>
