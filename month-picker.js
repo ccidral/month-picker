@@ -261,8 +261,11 @@ var MonthPicker = (function(){
       });
     }
     
-    model.on('change', function() {
+    model.on('change:year', function() {
       selectButton('a[data-year="' + model.get('year') + '"]', spinner);
+    });
+    
+    model.on('change:month', function() {
       selectButton('a[data-month="' + model.get('month') + '"]', months);
     });
     

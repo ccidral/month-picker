@@ -87,7 +87,24 @@
       expect(selectYears().eq(3).hasClass('selected')).to.be(false);
     });
     
-    it('should select year on click given that the previously selected year was out of visible range', function() {
+    it('should select month on click', function() {
+      var anotherMonth = notTheCurrentMonth();
+      selectMonths().eq(anotherMonth-1).click();
+      expect(selectMonths().eq(0).hasClass('selected')).to.be(anotherMonth == 1);
+      expect(selectMonths().eq(1).hasClass('selected')).to.be(anotherMonth == 2);
+      expect(selectMonths().eq(2).hasClass('selected')).to.be(anotherMonth == 3);
+      expect(selectMonths().eq(3).hasClass('selected')).to.be(anotherMonth == 4);
+      expect(selectMonths().eq(4).hasClass('selected')).to.be(anotherMonth == 5);
+      expect(selectMonths().eq(5).hasClass('selected')).to.be(anotherMonth == 6);
+      expect(selectMonths().eq(6).hasClass('selected')).to.be(anotherMonth == 7);
+      expect(selectMonths().eq(7).hasClass('selected')).to.be(anotherMonth == 8);
+      expect(selectMonths().eq(8).hasClass('selected')).to.be(anotherMonth == 9);
+      expect(selectMonths().eq(9).hasClass('selected')).to.be(anotherMonth == 10);
+      expect(selectMonths().eq(10).hasClass('selected')).to.be(anotherMonth == 11);
+      expect(selectMonths().eq(11).hasClass('selected')).to.be(anotherMonth == 12);
+    });
+    
+    it('does not fail to select another year when currently selected year is out of visible range', function() {
       spinYearDownButton().click();
       selectYears().eq(1).click();
       expect(selectYears().eq(0).hasClass('selected')).to.be(false);
@@ -96,8 +113,9 @@
       expect(selectYears().eq(3).hasClass('selected')).to.be(false);
     });
     
-    it('should select month on click', function() {
+    it('does not fail to select another month when currently selected year is out of visible range', function() {
       var anotherMonth = notTheCurrentMonth();
+      spinYearDownButton().click();
       selectMonths().eq(anotherMonth-1).click();
       expect(selectMonths().eq(0).hasClass('selected')).to.be(anotherMonth == 1);
       expect(selectMonths().eq(1).hasClass('selected')).to.be(anotherMonth == 2);
