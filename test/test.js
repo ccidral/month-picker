@@ -79,7 +79,7 @@
       expect(selectMonths().eq(11).hasClass('selected')).to.be(currentMonth() == 12);
     });
     
-    it('should select year when year is clicked', function() {
+    it('should select year on click', function() {
       selectYears().eq(2).click();
       expect(selectYears().eq(0).hasClass('selected')).to.be(false);
       expect(selectYears().eq(1).hasClass('selected')).to.be(false);
@@ -87,7 +87,7 @@
       expect(selectYears().eq(3).hasClass('selected')).to.be(false);
     });
     
-    it('should select year when year is clicked and previously selected year is out of visible range', function() {
+    it('should select year on click given that the previously selected year was out of visible range', function() {
       spinYearDownButton().click();
       selectYears().eq(1).click();
       expect(selectYears().eq(0).hasClass('selected')).to.be(false);
@@ -96,7 +96,7 @@
       expect(selectYears().eq(3).hasClass('selected')).to.be(false);
     });
     
-    it('should select month when month is clicked', function() {
+    it('should select month on click', function() {
       var anotherMonth = notTheCurrentMonth();
       selectMonths().eq(anotherMonth-1).click();
       expect(selectMonths().eq(0).hasClass('selected')).to.be(anotherMonth == 1);
@@ -261,40 +261,27 @@
         });
       });
       
-      describe('Change event', function() {
+      describe('The generic "change" event', function() {
         var triggered;
         
         beforeEach(function() {
           triggered = false;
+          
+          monthPicker.model().set('foo', 'something');
           
           monthPicker.model().on('change', function() {
             triggered = true;
           });
         });
         
-        it('is triggered when the user clicks on another year', function() {
-          selectYears().eq(1).click();
-          expect(triggered).to.be(true);
+        it('is not triggered when a property does not change', function() {
+          monthPicker.model().set('foo', 'something');
+          expect(triggered).to.be(false);
         });
         
-        it('is triggered when the user clicks on another month', function() {
-          selectMonths().eq(notTheCurrentMonth()-1).click();
-          expect(triggered).to.be(true);
-        });
-        
-        it('is triggered when it is programmatically changed', function() {
+        it('is triggered when any property of the model is programmatically changed', function() {
           monthPicker.model().set('foo', 'bar');
           expect(triggered).to.be(true);
-        });
-        
-        it('is not triggered when the user clicks on a year that is already selected', function() {
-          selectYears().eq(0).click();
-          expect(triggered).to.be(false);
-        });
-        
-        it('is not triggered when the user clicks on a month that is already selected', function() {
-          selectMonths().eq(currentMonth()-1).click();
-          expect(triggered).to.be(false);
         });
         
         it('accepts multiple event handlers', function() {
@@ -304,10 +291,106 @@
             alsoTriggeredTheOtherHandler = true;
           });
           
-          selectYears().eq(1).click();
+          monthPicker.model().set('foo', 'bar');
           
           expect(triggered).to.be(true);
           expect(alsoTriggeredTheOtherHandler).to.be(true);
+        });
+        
+        it('is triggered when a specific change event is triggered', function() {
+          var alsoTriggeredTheSpecificHandler = false;
+          
+          monthPicker.model().on('change:foo', function() {
+            alsoTriggeredTheSpecificHandler = true;
+          });
+          
+          monthPicker.model().set('foo', 'bar');
+          
+          expect(triggered).to.be(true);
+          expect(alsoTriggeredTheSpecificHandler).to.be(true);
+        });
+      });
+      
+      describe('Specific "change" events', function() {
+        var triggered;
+        
+        beforeEach(function() {
+          triggered = {
+            car: false,
+            food: false
+          };
+          
+          monthPicker.model().on('change:car', function() {
+            triggered.car = true;
+          });
+          
+          monthPicker.model().on('change:food', function() {
+            triggered.food = true;
+          });
+        });
+        
+        it('is triggered when corresponding property is changed', function() {
+          monthPicker.model().set('car', 'Mustang');
+          expect(triggered.car).to.be(true);
+        });
+        
+        it('is not triggered when incorresponding property is changed', function() {
+          monthPicker.model().set('car', 'Mustang');
+          expect(triggered.food).to.be(false);
+        });
+      });
+      
+      describe('The specific "change:year" event', function() {
+        var triggered;
+        
+        beforeEach(function() {
+          triggered = false;
+          
+          monthPicker.model().on('change:year', function() {
+            triggered = true;
+          });
+        });
+        
+        it('is triggered when the user selects a different year', function() {
+          selectYears().eq(1).click();
+          expect(triggered).to.be(true);
+        });
+        
+        it('is not triggered when the user selects a different month', function() {
+          selectMonths().eq(notTheCurrentMonth()-1).click();
+          expect(triggered).to.be(false);
+        });
+        
+        it('is not triggered when the user clicks on a year that is already selected', function() {
+          selectYears().eq(0).click();
+          expect(triggered).to.be(false);
+        });
+      });
+      
+      describe('The specific "change:month" event', function() {
+        var triggered;
+        
+        beforeEach(function() {
+          triggered = false;
+          
+          monthPicker.model().on('change:month', function() {
+            triggered = true;
+          });
+        });
+        
+        it('is triggered when the user selects a different month', function() {
+          selectMonths().eq(notTheCurrentMonth()-1).click();
+          expect(triggered).to.be(true);
+        });
+        
+        it('is not triggered when the user selects a different year', function() {
+          selectYears().eq(1).click();
+          expect(triggered).to.be(false);
+        });
+        
+        it('is not triggered when the user clicks on a month that is already selected', function() {
+          selectMonths().eq(currentMonth()-1).click();
+          expect(triggered).to.be(false);
         });
       });
     });

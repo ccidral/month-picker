@@ -22,9 +22,16 @@ var MonthPicker = (function(){
     };
     
     this.fire = function(name) {
-      if(typeof handlers[name] !== 'undefined') {
-        for(var index = 0; index < handlers[name].length; index++) {
-          handlers[name][index]();
+      var genericName = name.substring(0, name.indexOf(':'));
+      
+      callHandlers(handlers[genericName]);
+      callHandlers(handlers[name]);
+      
+      function callHandlers(handlers) {
+        if(typeof handlers !== 'undefined') {
+          for(var index = 0; index < handlers.length; index++) {
+            handlers[index]();
+          }
         }
       }
     };
@@ -44,7 +51,7 @@ var MonthPicker = (function(){
       attributes[name] = value;
       
       if(changed) {
-        events.fire('change');
+        events.fire('change:' + name);
       }
     };
     
